@@ -9,7 +9,7 @@ export class UsersService {
   public async create(createUserDto: CreateUserDto): Promise<any> {
     console.log(createUserDto);
     this.postsService.create({});
-    return 'This action adds a new user';
+    return createUserDto;
   }
 
   public async findAll(): Promise<any> {
