@@ -1,29 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { CarsService } from '../cars/cars.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { PostsService } from '../posts/posts.service';
+import { CreateUserDto } from './dto/req/create-user.dto';
+import { UpdateUserDto } from './dto/req/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly carsService: CarsService) {}
-  create(createUserDto: CreateUserDto) {
-    this.carsService.create({});
+  constructor(private readonly postsService: PostsService) {}
+  public async create(createUserDto: CreateUserDto): Promise<any> {
+    console.log(createUserDto);
+    this.postsService.create({});
     return 'This action adds a new user';
   }
 
-  findAll() {
+  public async findAll(): Promise<any> {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
+  public async findOne(id: number): Promise<any> {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  public async findMe(): Promise<any> {
+    return `This action returns me`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  public async updateMe(updateUserDto: UpdateUserDto): Promise<any> {
+    console.log(updateUserDto);
+    return `This action updates me`;
+  }
+
+  public async removeMe(): Promise<any> {
+    return `This action removes me`;
   }
 }
