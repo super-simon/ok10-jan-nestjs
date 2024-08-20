@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import path from 'path';
+import * as path from 'node:path';
 import { Config, PostgresConfig } from 'src/config/config.type';
 
 @Module({
