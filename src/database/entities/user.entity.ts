@@ -19,4 +19,7 @@ export class UserEntity {
 
   @Column('int')
   age: number;
+
+  @Column('boolean', { default: true })
+  isVerified: boolean;
 }
