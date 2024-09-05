@@ -3,6 +3,7 @@ export type Config = {
   postgres: PostgresConfig;
   redis: RedisConfig;
   minio: MinioConfig;
+  sentry: SentryConfig;
 };
 
 export type AppConfig = {
@@ -27,4 +28,10 @@ export type RedisConfig = {
 export type MinioConfig = {
   user: string;
   password: string;
+};
+
+export type SentryConfig = {
+  dsn: string;
+  env: string;
+  debug: boolean;
 };

@@ -19,4 +19,9 @@ export default () => ({
     user: process.env.MINIO_ROOT_USER || 'user',
     password: process.env.MINIO_ROOT_PASSWORD || 'password',
   },
+  sentry: {
+    dsn: process.env.SENTRY_DSN,
+    env: process.env.SENTRY_ENV,
+    debug: process.env.SENTRY_DEBUG === 'true',
+  },
 });

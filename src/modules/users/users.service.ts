@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { LoggerService } from '../logger/logger.service';
 import { PostsService } from '../posts/posts.service';
 import { CreateUserDto } from './dto/req/create-user.dto';
 import { UpdateUserDto } from './dto/req/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly logger: LoggerService,
+  ) {}
   public async create(createUserDto: CreateUserDto): Promise<any> {
-    console.log(createUserDto);
     this.postsService.create({});
     return createUserDto;
   }
