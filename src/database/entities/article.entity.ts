@@ -7,7 +7,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { LileEntity } from './like.entity';
+import { LikeEntity } from './like.entity';
 import { CreateUpdateModel } from './models/create-update.model';
 import { TagEntity } from './tag.entity';
 import { UserEntity } from './user.entity';
@@ -23,8 +23,8 @@ export class ArticleEntity extends CreateUpdateModel {
   @Column('text')
   body: string;
 
-  @OneToMany(() => LileEntity, (entity) => entity.article)
-  likes?: LileEntity[];
+  @OneToMany(() => LikeEntity, (entity) => entity.article)
+  likes?: LikeEntity[];
 
   @Column()
   user_id: string;

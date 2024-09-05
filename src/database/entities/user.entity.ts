@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
+
 import { ArticleEntity } from './article.entity';
-import { LileEntity } from './like.entity';
+import { LikeEntity } from './like.entity';
 import { CreateUpdateModel } from './models/create-update.model';
 import { RefreshTokenEntity } from './refresh-token.entity';
 
@@ -21,8 +22,8 @@ export class UserEntity extends CreateUpdateModel {
   @Column('text', { nullable: true })
   image?: string;
 
-  @OneToMany(() => LileEntity, (entity) => entity.user)
-  likes?: LileEntity[];
+  @OneToMany(() => LikeEntity, (entity) => entity.user)
+  likes?: LikeEntity[];
 
   @OneToMany(() => ArticleEntity, (entity) => entity.user)
   articles?: ArticleEntity[];

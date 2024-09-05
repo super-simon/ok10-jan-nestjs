@@ -4,7 +4,7 @@ import { CreateUpdateModel } from './models/create-update.model';
 import { UserEntity } from './user.entity';
 
 @Entity('likes')
-export class LileEntity extends CreateUpdateModel {
+export class LikeEntity extends CreateUpdateModel {
   @Column()
   user_id: string;
   @ManyToOne(() => UserEntity, (entity) => entity.likes)

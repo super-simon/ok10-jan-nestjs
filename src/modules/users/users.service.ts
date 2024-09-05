@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LoggerService } from '../logger/logger.service';
 import { PostsService } from '../posts/posts.service';
+import { UserRepository } from '../repository/services/user.repository';
 import { CreateUserDto } from './dto/req/create-user.dto';
 import { UpdateUserDto } from './dto/req/update-user.dto';
 
@@ -9,9 +10,16 @@ export class UsersService {
   constructor(
     private readonly postsService: PostsService,
     private readonly logger: LoggerService,
+    private readonly userRepository: UserRepository,
   ) {}
   public async create(createUserDto: CreateUserDto): Promise<any> {
+    console.log(createUserDto);
     this.postsService.create({});
+    return await this.userRepository.save({
+      name: 'John Doe',
+      email: 'test@test.com',
+      password: 'password123',
+    });
     return createUserDto;
   }
 

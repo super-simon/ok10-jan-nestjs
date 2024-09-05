@@ -1,17 +1,14 @@
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
-  IsInt,
   IsNotIn,
-  IsNumber,
   IsOptional,
   IsString,
   Length,
-  Max,
-  Min,
   ValidateIf,
 } from 'class-validator';
 import { TransformHelper } from 'src/common/helpers/transform.helper';
+import { AgeValid } from '../../decorators/age-valid.decorator';
 
 export class CreateUserDto {
   @IsString()
@@ -30,12 +27,7 @@ export class CreateUserDto {
   // @Matches(/^.$/, { message: 'Incorrect password' })
   public readonly password: string;
 
-  @IsInt()
-  @IsNumber()
-  @Min(15)
-  @Max(150)
-  @IsOptional()
-  @Type(() => Number)
+  @AgeValid()
   public readonly age?: number;
 
   @Transform(TransformHelper.trim)
