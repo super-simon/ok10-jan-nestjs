@@ -19,8 +19,8 @@ import { Config, PostgresConfig } from 'src/config/config.type';
           entities: [
             path.join(
               process.cwd(),
-              'src',
               'dist',
+              'src',
               'database',
               'entities',
               '*.entity.js',
@@ -29,8 +29,8 @@ import { Config, PostgresConfig } from 'src/config/config.type';
           migrations: [
             path.join(
               process.cwd(),
-              'src',
               'dist',
+              'src',
               'database',
               'migrations',
               '*.js',
