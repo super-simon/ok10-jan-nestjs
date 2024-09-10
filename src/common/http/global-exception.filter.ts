@@ -1,5 +1,6 @@
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
@@ -17,7 +18,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     let status: number;
     let messages: string[] | string;
-    if (exception instanceof HttpException) {
+    if (exception instanceof BadRequestException) {
+      status = exception.getStatus();
+      messages = (exception.getResponse() as any).message;
+    } else if (exception instanceof HttpException) {
       status = exception.getStatus();
       messages = exception.message;
     } else {
