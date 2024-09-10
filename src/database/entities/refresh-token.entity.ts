@@ -1,8 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CreateUpdateModel } from './models/create-update.model';
 import { UserEntity } from './user.entity';
+import { TableNameEnum } from './enums/table-name.enum';
 
-@Entity('refresh_token')
+@Entity(TableNameEnum.REFRESH_TOKENS)
 export class RefreshTokenEntity extends CreateUpdateModel {
   @Column('text')
   refreshToken: string;
