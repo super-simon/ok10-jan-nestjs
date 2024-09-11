@@ -14,7 +14,7 @@ export class AddBaseTables1725551391631 implements MigrationInterface {
       `CREATE TABLE "articles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "title" text NOT NULL, "description" text NOT NULL, "body" text NOT NULL, "user_id" uuid NOT NULL, CONSTRAINT "PK_0a6e2c450d83e0b6052c2793334" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "refresh_token" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "refreshToken" text NOT NULL, "deviceId" text NOT NULL, "user_id" uuid NOT NULL, CONSTRAINT "PK_b575dd3c21fb0831013c909e7fe" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "refresh_tokens" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "refreshToken" text NOT NULL, "deviceId" text NOT NULL, "user_id" uuid NOT NULL, CONSTRAINT "PK_b575dd3c21fb0831013c909e7fe" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "articles_tags_tags" ("articlesId" uuid NOT NULL, "tagsId" uuid NOT NULL, CONSTRAINT "PK_bee9492f5e2157b6dc27fd510bd" PRIMARY KEY ("articlesId", "tagsId"))`,
@@ -46,7 +46,7 @@ export class AddBaseTables1725551391631 implements MigrationInterface {
       `ALTER TABLE "articles" ADD CONSTRAINT "FK_87bb15395540ae06337a486a77a" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "refresh_token" ADD CONSTRAINT "FK_6bbe63d2fe75e7f0ba1710351d4" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "refresh_tokens" ADD CONSTRAINT "FK_6bbe63d2fe75e7f0ba1710351d4" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "articles_tags_tags" ADD CONSTRAINT "FK_0adb8d108330d74e4a7f7d29de2" FOREIGN KEY ("articlesId") REFERENCES "articles"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
@@ -64,7 +64,7 @@ export class AddBaseTables1725551391631 implements MigrationInterface {
       `ALTER TABLE "articles_tags_tags" DROP CONSTRAINT "FK_0adb8d108330d74e4a7f7d29de2"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "refresh_token" DROP CONSTRAINT "FK_6bbe63d2fe75e7f0ba1710351d4"`,
+      `ALTER TABLE "refresh_tokens" DROP CONSTRAINT "FK_6bbe63d2fe75e7f0ba1710351d4"`,
     );
     await queryRunner.query(
       `ALTER TABLE "articles" DROP CONSTRAINT "FK_87bb15395540ae06337a486a77a"`,
@@ -91,7 +91,7 @@ export class AddBaseTables1725551391631 implements MigrationInterface {
       `DROP INDEX "public"."IDX_0adb8d108330d74e4a7f7d29de"`,
     );
     await queryRunner.query(`DROP TABLE "articles_tags_tags"`);
-    await queryRunner.query(`DROP TABLE "refresh_token"`);
+    await queryRunner.query(`DROP TABLE "refresh_tokens"`);
     await queryRunner.query(`DROP TABLE "articles"`);
     await queryRunner.query(`DROP TABLE "tags"`);
     await queryRunner.query(`DROP TABLE "likes"`);

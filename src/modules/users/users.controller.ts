@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -16,24 +8,14 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CreateUserDto } from './dto/req/create-user.dto';
 import { UpdateUserDto } from './dto/req/update-user.dto';
-import { PrivateUserResDto } from './dto/res/private-user.res.dto';
-import { PublicUserResDto } from './dto/res/public-user.res.dto';
+import { UserResDto } from './dto/res/user.res.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @Post()
-  public async create(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<PrivateUserResDto> {
-    return await this.usersService.create(createUserDto);
-  }
 
   @Get()
   public async findAll(): Promise<any> {
@@ -46,7 +28,7 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiConflictResponse({ description: 'Conflict' })
   @Get('me')
-  public async findMe(): Promise<PrivateUserResDto> {
+  public async findMe(): Promise<UserResDto> {
     return await this.usersService.findMe();
   }
 
@@ -58,7 +40,7 @@ export class UsersController {
   @Patch('me')
   public async updateMe(
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<PrivateUserResDto> {
+  ): Promise<UserResDto> {
     return await this.usersService.updateMe(updateUserDto);
   }
 
@@ -73,9 +55,7 @@ export class UsersController {
   }
 
   @Get(':userId')
-  public async findOne(
-    @Param('userId') userId: string,
-  ): Promise<PublicUserResDto> {
+  public async findOne(@Param('userId') userId: string): Promise<UserResDto> {
     return await this.usersService.findOne(+userId);
   }
 }
