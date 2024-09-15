@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
-  Patch,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -29,11 +29,6 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
-  public async findAll(): Promise<any> {
-    return await this.usersService.findAll();
-  }
-
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'unauthorized' })
   @ApiUnauthorizedResponse({ description: 'unauthorized' })
@@ -50,12 +45,13 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiConflictResponse({ description: 'Conflict' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  @Patch('me')
+  @Put('me')
   public async updateMe(
     @CurrentUser() userData: IUserData,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResDto> {
-    return await this.usersService.updateMe(userData, updateUserDto);
+    const result = await this.usersService.updateMe(userData, updateUserDto);
+    return UserMapper.toResponseDTO(result);
   }
 
   @ApiBearerAuth()
@@ -64,8 +60,8 @@ export class UsersController {
   @ApiConflictResponse({ description: 'Conflict' })
   @ApiNoContentResponse({ description: 'User has been removed' })
   @Delete('me')
-  public async removeMe(): Promise<void> {
-    return await this.usersService.removeMe();
+  public async removeMe(@CurrentUser() userData: IUserData): Promise<void> {
+    return await this.usersService.removeMe(userData);
   }
 
   @SkipAuth()
@@ -73,6 +69,7 @@ export class UsersController {
   public async findOne(
     @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<UserResDto> {
-    return await this.usersService.findOne(+userId);
+    const result = await this.usersService.findOne(userId);
+    return UserMapper.toResponseDTO(result);
   }
 }
