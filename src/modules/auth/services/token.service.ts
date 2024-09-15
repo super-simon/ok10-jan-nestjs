@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { JwtService } from '@nestjs/jwt';
 import { Config, JwtConfig } from '../../../config/config.type';
@@ -34,9 +34,13 @@ export class TokenService {
     token: string,
     type: TokenType,
   ): Promise<IJwtPayload> {
-    return await this.jwtService.verifyAsync(token, {
-      secret: this.getSecret(type),
-    });
+    try {
+      return await this.jwtService.verifyAsync(token, {
+        secret: this.getSecret(type),
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 
   private getSecret(type: TokenType): string {
