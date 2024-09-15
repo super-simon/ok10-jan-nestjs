@@ -26,9 +26,10 @@ export class UsersService {
     return await this.userRepository.findOneBy({ id: userData.userId });
   }
 
-  public async updateMe(updateUserDto: UpdateUserDto): Promise<any> {
-    console.log(updateUserDto);
-    return `This action updates me`;
+  public async updateMe(userData, updateUserDto: UpdateUserDto): Promise<any> {
+    const user = await this.userRepository.findOneBy({ id: userData.userId });
+    this.userRepository.merge(user, updateUserDto);
+    return await this.userRepository.save(user);
   }
 
   public async removeMe(): Promise<any> {

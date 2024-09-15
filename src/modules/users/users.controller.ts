@@ -52,9 +52,10 @@ export class UsersController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @Patch('me')
   public async updateMe(
+    @CurrentUser() userData: IUserData,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResDto> {
-    return await this.usersService.updateMe(updateUserDto);
+    return await this.usersService.updateMe(userData, updateUserDto);
   }
 
   @ApiBearerAuth()
