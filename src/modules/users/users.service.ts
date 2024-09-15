@@ -8,7 +8,7 @@ import { IUserData } from '../auth/interfaces/user-data.interface';
 import { AuthCacheService } from '../auth/services/auth-cache.service';
 import { LoggerService } from '../logger/logger.service';
 import { PostsService } from '../posts/posts.service';
-import { RefreshTokenRepository } from '../repository/services/refresh-token.repository';
+import { FollowRepository } from '../repository/services/follow.repository';
 import { UserRepository } from '../repository/services/user.repository';
 import { UpdateUserDto } from './dto/req/update-user.dto';
 
@@ -18,8 +18,8 @@ export class UsersService {
     private readonly postsService: PostsService,
     private readonly logger: LoggerService,
     private readonly userRepository: UserRepository,
-    private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly authCacheService: AuthCacheService,
+    private readonly followRepository: FollowRepository,
   ) {}
 
   public async findAll(): Promise<any> {
@@ -50,6 +50,55 @@ export class UsersService {
   public async removeMe(userData: IUserData): Promise<any> {
     await this.userRepository.delete({ id: userData.userId });
     await this.authCacheService.deleteToken(userData.userId, userData.deviceId);
+  }
+
+  public async follow(userData: IUserData, userId: string): Promise<void> {
+    if (userData.userId === userId) {
+      throw new ConflictException('You can not follow yourself!');
+    }
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    const follow = await this.followRepository.findOneBy({
+      follower_id: userData.userId,
+      following_id: userId,
+    });
+
+    if (follow) {
+      throw new ConflictException('You already follow this user.');
+    }
+
+    await this.followRepository.save(
+      this.followRepository.create({
+        follower_id: userData.userId,
+        following_id: userId,
+      }),
+    );
+  }
+
+  public async unfollow(userData: IUserData, userId: string): Promise<void> {
+    if (userData.userId === userId) {
+      throw new ConflictException('You can not follow yourself!');
+    }
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    const follow = await this.followRepository.findOneBy({
+      follower_id: userData.userId,
+      following_id: userId,
+    });
+
+    if (!follow) {
+      throw new ConflictException('You do not follow this user.');
+    }
+
+    await this.followRepository.delete({ id: follow.id });
   }
 
   public async isEmailExistOrThrow(email: string): Promise<void> {

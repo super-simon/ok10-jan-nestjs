@@ -3,8 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
+  Post,
   Put,
 } from '@nestjs/common';
 import {
@@ -59,6 +62,7 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiConflictResponse({ description: 'Conflict' })
   @ApiNoContentResponse({ description: 'User has been removed' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('me')
   public async removeMe(@CurrentUser() userData: IUserData): Promise<void> {
     return await this.usersService.removeMe(userData);
@@ -71,5 +75,25 @@ export class UsersController {
   ): Promise<UserResDto> {
     const result = await this.usersService.findOne(userId);
     return UserMapper.toResponseDTO(result);
+  }
+
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post(':userId/follow')
+  public async follow(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @CurrentUser() userData: IUserData,
+  ): Promise<void> {
+    await this.usersService.follow(userData, userId);
+  }
+
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':userId/unfollow')
+  public async unfollow(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @CurrentUser() userData: IUserData,
+  ): Promise<void> {
+    await this.usersService.unfollow(userData, userId);
   }
 }
