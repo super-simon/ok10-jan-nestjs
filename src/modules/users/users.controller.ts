@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -8,8 +16,12 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
+import { IUserData } from '../auth/interfaces/user-data.interface';
 import { UpdateUserDto } from './dto/req/update-user.dto';
 import { UserResDto } from './dto/res/user.res.dto';
+import { UserMapper } from './user.mapper';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')
@@ -28,8 +40,9 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiConflictResponse({ description: 'Conflict' })
   @Get('me')
-  public async findMe(): Promise<UserResDto> {
-    return await this.usersService.findMe();
+  public async findMe(@CurrentUser() userData: IUserData): Promise<UserResDto> {
+    const result = await this.usersService.findMe(userData);
+    return UserMapper.toResponseDTO(result);
   }
 
   @ApiBearerAuth()
@@ -54,8 +67,11 @@ export class UsersController {
     return await this.usersService.removeMe();
   }
 
+  @SkipAuth()
   @Get(':userId')
-  public async findOne(@Param('userId') userId: string): Promise<UserResDto> {
+  public async findOne(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<UserResDto> {
     return await this.usersService.findOne(+userId);
   }
 }

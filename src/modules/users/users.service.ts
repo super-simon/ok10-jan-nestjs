@@ -1,4 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { UserEntity } from 'src/database/entities/user.entity';
+import { IUserData } from '../auth/interfaces/user-data.interface';
 import { LoggerService } from '../logger/logger.service';
 import { PostsService } from '../posts/posts.service';
 import { UserRepository } from '../repository/services/user.repository';
@@ -20,8 +22,8 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  public async findMe(): Promise<any> {
-    return `This action returns me`;
+  public async findMe(userData: IUserData): Promise<UserEntity> {
+    return await this.userRepository.findOneBy({ id: userData.userId });
   }
 
   public async updateMe(updateUserDto: UpdateUserDto): Promise<any> {
