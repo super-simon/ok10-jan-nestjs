@@ -122,4 +122,14 @@ export class AuthService {
 
     return tokens;
   }
+
+  public async signOut(userData: IUserData): Promise<void> {
+    await Promise.all([
+      this.refreshTokenRepository.delete({
+        deviceId: userData.deviceId,
+        user_id: userData.userId,
+      }),
+      this.authCacheService.deleteToken(userData.userId, userData.deviceId),
+    ]);
+  }
 }
