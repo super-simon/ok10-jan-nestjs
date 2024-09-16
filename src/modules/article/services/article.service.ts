@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { ArticleEntity } from 'src/database/entities/article.entity';
 import { TagEntity } from 'src/database/entities/tag.entity';
 import { In } from 'typeorm';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ArticleRepository } from '../../repository/services/article.repository';
 import { TagRepository } from '../../repository/services/tag.repository';
+import { ArticleListQueryDto } from '../dto/req/article-list.query.dto';
 import { CreateArticleDto } from '../dto/req/create-article.req.dto';
 import { UpdateArticleDto } from '../dto/req/update-article.req.dto';
-import { ArticleResDto } from '../dto/res/article.res.dto';
-import { ArticleMapper } from './article.mapper';
 
 @Injectable()
 export class ArticleService {
@@ -15,19 +15,26 @@ export class ArticleService {
     private readonly tagRepository: TagRepository,
     private readonly articleRepository: ArticleRepository,
   ) {}
+
+  public async getList(
+    userData: IUserData,
+    query: ArticleListQueryDto,
+  ): Promise<[ArticleEntity[], number]> {
+    return await this.articleRepository.getList(userData.userId, query);
+  }
+
   public async create(
     userData: IUserData,
     createArticleDto: CreateArticleDto,
-  ): Promise<ArticleResDto> {
+  ): Promise<ArticleEntity> {
     const tags = await this.createTags(createArticleDto.tags);
-    const result = await this.articleRepository.save(
+    return await this.articleRepository.save(
       this.articleRepository.create({
         ...createArticleDto,
         user_id: userData.userId,
         tags,
       }),
     );
-    return ArticleMapper.toResponseDTO(result);
   }
 
   public async update(
