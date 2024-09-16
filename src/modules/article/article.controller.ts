@@ -20,7 +20,7 @@ export class ArticleController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Post()
-  create(
+  public async create(
     @Body() createArticleDto: CreateArticleDto,
     @CurrentUser() userData: IUserData,
   ): Promise<ArticleResDto> {
@@ -31,7 +31,7 @@ export class ArticleController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @Patch(':articleId')
-  update(
+  public async update(
     @Param('articleId') articleId: string,
     @Body() updateArticleDto: UpdateArticleDto,
     @CurrentUser() userData: IUserData,

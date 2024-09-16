@@ -9,6 +9,7 @@ import { LoggerModule } from './logger/logger.module';
 import { PostgresModule } from './postgres/postgres.module';
 import { RedisModule } from './redis/redis.module';
 import { RepositoryModule } from './repository/repository.module';
+import { TagModule } from './tag/tag.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     LoggerModule,
     RepositoryModule,
     RedisModule,
+    TagModule,
   ],
   providers: [
     {
