@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -75,5 +76,29 @@ export class ArticleController {
     @CurrentUser() userData: IUserData,
   ): Promise<ArticleResDto> {
     return this.articleService.update(userData, articleId, updateArticleDto);
+  }
+
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @Patch(':articleId/like')
+  public async like(
+    @Param('articleId') articleId: string,
+    @CurrentUser() userData: IUserData,
+  ): Promise<ArticleResDto> {
+    const result = await this.articleService.like(userData, articleId);
+    return ArticleMapper.toResponseDTO(result);
+  }
+
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @Delete(':articleId/unlike')
+  public async unlike(
+    @Param('articleId') articleId: string,
+    @CurrentUser() userData: IUserData,
+  ): Promise<ArticleResDto> {
+    const result = await this.articleService.unlike(userData, articleId);
+    return ArticleMapper.toResponseDTO(result);
   }
 }

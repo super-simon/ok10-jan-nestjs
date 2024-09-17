@@ -1,6 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ArticleEntity } from 'src/database/entities/article.entity';
 import { TagEntity } from 'src/database/entities/tag.entity';
+import { LikeRepository } from 'src/modules/repository/services/like.repository';
 import { In } from 'typeorm';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ArticleRepository } from '../../repository/services/article.repository';
@@ -14,6 +19,7 @@ export class ArticleService {
   constructor(
     private readonly tagRepository: TagRepository,
     private readonly articleRepository: ArticleRepository,
+    private readonly likeRepository: LikeRepository,
   ) {}
 
   public async getList(
@@ -51,6 +57,57 @@ export class ArticleService {
   ): Promise<any> {
     console.log(updateArticleDto);
     return `This action updates a #${articleId} article`;
+  }
+
+  public async like(
+    userData: IUserData,
+    articleId: string,
+  ): Promise<ArticleEntity> {
+    await this.checkIfArticleExistsOrThrow(articleId);
+
+    const like = await this.likeRepository.findOneBy({
+      article_id: articleId,
+      user_id: userData.userId,
+    });
+    if (like) {
+      throw new ConflictException('Already liked');
+    }
+
+    await this.likeRepository.save(
+      this.likeRepository.create({
+        article_id: articleId,
+        user_id: userData.userId,
+      }),
+    );
+    return await this.articleRepository.getById(userData.userId, articleId);
+  }
+
+  public async unlike(
+    userData: IUserData,
+    articleId: string,
+  ): Promise<ArticleEntity> {
+    await this.checkIfArticleExistsOrThrow(articleId);
+
+    const like = await this.likeRepository.findOneBy({
+      article_id: articleId,
+      user_id: userData.userId,
+    });
+    if (!like) {
+      throw new ConflictException('Not liked yet');
+    }
+
+    await this.likeRepository.remove(like);
+
+    return await this.articleRepository.getById(userData.userId, articleId);
+  }
+
+  public async checkIfArticleExistsOrThrow(articleId: string): Promise<void> {
+    const article = await this.articleRepository.findOneBy({
+      id: articleId,
+    });
+    if (!article) {
+      throw new NotFoundException('Article not found');
+    }
   }
 
   private async createTags(tags: string[]): Promise<TagEntity[]> {

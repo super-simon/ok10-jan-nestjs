@@ -17,6 +17,7 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     const qb = this.createQueryBuilder('article');
     qb.leftJoinAndSelect('article.tags', 'tag');
     qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.likes', 'like', 'like.user_id = :userId');
 
     if (query.search) {
       qb.andWhere('CONCAT(article.title, article.description) ILIKE :search', {
@@ -33,8 +34,9 @@ export class ArticleRepository extends Repository<ArticleEntity> {
       'user.followings',
       'following',
       'following.follower_id = :userId',
-      { userId },
     );
+
+    qb.setParameter('userId', userId);
 
     qb.take(query.limit);
     qb.skip(query.offset);
@@ -48,6 +50,7 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     const qb = this.createQueryBuilder('article');
     qb.leftJoinAndSelect('article.tags', 'tag');
     qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.likes', 'like', 'like.user_id = :userId');
 
     qb.andWhere('article.id = :articleId', { articleId });
 
@@ -55,8 +58,9 @@ export class ArticleRepository extends Repository<ArticleEntity> {
       'user.followings',
       'following',
       'following.follower_id = :userId',
-      { userId },
     );
+
+    qb.setParameter('userId', userId);
 
     return await qb.getOneOrFail();
   }

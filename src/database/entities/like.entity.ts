@@ -1,9 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { ArticleEntity } from './article.entity';
+import { TableNameEnum } from './enums/table-name.enum';
 import { CreateUpdateModel } from './models/create-update.model';
 import { UserEntity } from './user.entity';
-import { TableNameEnum } from './enums/table-name.enum';
 
+@Unique('unique_like', ['user_id', 'article_id'])
 @Entity(TableNameEnum.LIKES)
 export class LikeEntity extends CreateUpdateModel {
   @Column()
