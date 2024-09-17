@@ -36,6 +36,7 @@ export default (): Config => ({
     region: process.env.AWS_S3_REGION,
     accessKeyId: process.env.AWS_S3_ACCESS_KEY,
     secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+    bucketURL: process.env.AWS_S3_BUCKET_URL,
     bucketName: process.env.AWS_S3_BUCKET_NAME,
     endpoint: process.env.AWS_S3_ENDPOINT,
   },
