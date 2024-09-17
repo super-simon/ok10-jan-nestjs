@@ -1,5 +1,7 @@
+import { UserMapper } from 'src/modules/users/user.mapper';
 import { ArticleEntity } from '../../../database/entities/article.entity';
 import { ArticleListQueryDto } from '../dto/req/article-list.query.dto';
+import { ArticleListItemResDto } from '../dto/res/article-list-item.res.dto';
 import { ArticleListResDto } from '../dto/res/article-list.res.dto';
 import { ArticleResDto } from '../dto/res/article.res.dto';
 
@@ -16,13 +18,16 @@ export class ArticleMapper {
     };
   }
 
-  public static toResponseListItemDTO(entity: ArticleEntity): any {
+  public static toResponseListItemDTO(
+    entity: ArticleEntity,
+  ): ArticleListItemResDto {
     return {
       id: entity.id,
       title: entity.title,
       description: entity.description,
       created: entity.created,
       tags: entity.tags.map((tag) => tag.name),
+      user: UserMapper.toResponseDTO(entity.user),
     };
   }
 

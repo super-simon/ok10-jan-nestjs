@@ -16,6 +16,7 @@ export class ArticleRepository extends Repository<ArticleEntity> {
   ): Promise<[ArticleEntity[], number]> {
     const qb = this.createQueryBuilder('article');
     qb.leftJoinAndSelect('article.tags', 'tag');
+    qb.leftJoinAndSelect('article.user', 'user');
 
     if (query.search) {
       qb.andWhere('CONCAT(article.title, article.description) ILIKE :search', {
