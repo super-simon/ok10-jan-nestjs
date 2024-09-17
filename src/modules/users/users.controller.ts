@@ -9,16 +9,21 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
+  ApiConsumes,
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ApiFile } from 'src/common/decorators/api-file.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -75,6 +80,26 @@ export class UsersController {
   ): Promise<UserResDto> {
     const result = await this.usersService.findOne(userId);
     return UserMapper.toResponseDTO(result);
+  }
+
+  @ApiBearerAuth()
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiConsumes('multipart/form-data')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiFile('avatar', false, false)
+  @Post(':me/avatar')
+  public async uploadAvatar(
+    @UploadedFile() avatar: Express.Multer.File,
+    @CurrentUser() userData: IUserData,
+  ): Promise<void> {
+    await this.usersService.uploadAvatar(userData, avatar);
+  }
+
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':me/avatar')
+  public async deleteAvatar(@CurrentUser() userData: IUserData): Promise<void> {
+    await this.usersService.deleteAvatar(userData);
   }
 
   @ApiBearerAuth()

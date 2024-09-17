@@ -5,6 +5,7 @@ export type Config = {
   minio: MinioConfig;
   sentry: SentryConfig;
   jwt: JwtConfig;
+  aws: AwsConfig;
 };
 
 export type AppConfig = {
@@ -42,4 +43,12 @@ export type JwtConfig = {
   accessExpiresIn: number;
   refreshSecret: string;
   refreshExpiresIn: number;
+};
+
+export type AwsConfig = {
+  region: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucketName: string;
+  endpoint: string;
 };
