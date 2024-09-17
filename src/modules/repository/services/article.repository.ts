@@ -29,8 +29,35 @@ export class ArticleRepository extends Repository<ArticleEntity> {
       qb.setParameter('tag', query.tag);
     }
 
+    qb.leftJoinAndSelect(
+      'user.followings',
+      'following',
+      'following.follower_id = :userId',
+      { userId },
+    );
+
     qb.take(query.limit);
     qb.skip(query.offset);
     return await qb.getManyAndCount();
+  }
+
+  public async getById(
+    userId: string,
+    articleId: string,
+  ): Promise<ArticleEntity> {
+    const qb = this.createQueryBuilder('article');
+    qb.leftJoinAndSelect('article.tags', 'tag');
+    qb.leftJoinAndSelect('article.user', 'user');
+
+    qb.andWhere('article.id = :articleId', { articleId });
+
+    qb.leftJoinAndSelect(
+      'user.followings',
+      'following',
+      'following.follower_id = :userId',
+      { userId },
+    );
+
+    return await qb.getOneOrFail();
   }
 }

@@ -56,12 +56,24 @@ export class ArticleController {
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: 'Not Found' })
+  @Get(':articleId')
+  public async getById(
+    @Param('articleId') articleId: string,
+    @CurrentUser() userData: IUserData,
+  ): Promise<ArticleResDto> {
+    const result = await this.articleService.getById(userData, articleId);
+    return ArticleMapper.toResponseDTO(result);
+  }
+
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   @Patch(':articleId')
   public async update(
     @Param('articleId') articleId: string,
     @Body() updateArticleDto: UpdateArticleDto,
     @CurrentUser() userData: IUserData,
-  ): Promise<string> {
+  ): Promise<ArticleResDto> {
     return this.articleService.update(userData, articleId, updateArticleDto);
   }
 }

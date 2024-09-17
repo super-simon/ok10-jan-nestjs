@@ -40,6 +40,7 @@ export class ArticleMapper {
       created: entity.created,
       updated: entity.updated,
       tags: entity.tags.map((tag) => tag.name),
+      user: UserMapper.toResponseDTO(entity.user),
     };
   }
 }

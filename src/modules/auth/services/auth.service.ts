@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RefreshTokenRepository } from 'src/modules/repository/services/refresh-token.repository';
+import { UserMapper } from 'src/modules/users/user.mapper';
 import { UsersService } from 'src/modules/users/users.service';
 import { UserRepository } from '../../repository/services/user.repository';
 import { SignInReqDto } from '../dto/req/sign-in.req.dto';
@@ -46,7 +47,7 @@ export class AuthService {
       ),
     ]);
 
-    return { user, tokens };
+    return { user: UserMapper.toResponseDTO(user), tokens };
   }
 
   public async signIn(dto: SignInReqDto): Promise<AuthResDto> {
@@ -89,7 +90,7 @@ export class AuthService {
       ),
     ]);
     const userEntity = await this.userRepository.findOneBy({ id: user.id });
-    return { user: userEntity, tokens };
+    return { user: UserMapper.toResponseDTO(userEntity), tokens };
   }
 
   public async refresh(userData: IUserData): Promise<TokenPairResDto> {

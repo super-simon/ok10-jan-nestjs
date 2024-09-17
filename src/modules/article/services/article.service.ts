@@ -37,11 +37,18 @@ export class ArticleService {
     );
   }
 
+  public async getById(
+    userData: IUserData,
+    articleId: string,
+  ): Promise<ArticleEntity> {
+    return await this.articleRepository.getById(userData.userId, articleId);
+  }
+
   public async update(
     userData: IUserData,
     articleId: string,
     updateArticleDto: UpdateArticleDto,
-  ): Promise<string> {
+  ): Promise<any> {
     console.log(updateArticleDto);
     return `This action updates a #${articleId} article`;
   }
