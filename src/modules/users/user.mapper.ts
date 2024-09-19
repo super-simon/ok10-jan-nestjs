@@ -7,6 +7,7 @@ import { UserResDto } from './dto/res/user.res.dto';
 export class UserMapper {
   public static toResponseDTO(data: UserEntity): UserResDto {
     const awsConfig = ConfigStaticService.get().aws;
+
     return {
       id: data.id,
       name: data.name,

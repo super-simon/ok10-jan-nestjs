@@ -6,7 +6,7 @@ import {
 import { ArticleEntity } from 'src/database/entities/article.entity';
 import { TagEntity } from 'src/database/entities/tag.entity';
 import { LikeRepository } from 'src/modules/repository/services/like.repository';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ArticleRepository } from '../../repository/services/article.repository';
 import { TagRepository } from '../../repository/services/tag.repository';
@@ -20,6 +20,7 @@ export class ArticleService {
     private readonly tagRepository: TagRepository,
     private readonly articleRepository: ArticleRepository,
     private readonly likeRepository: LikeRepository,
+    private readonly entityManager: EntityManager,
   ) {}
 
   public async getList(
@@ -33,14 +34,19 @@ export class ArticleService {
     userData: IUserData,
     createArticleDto: CreateArticleDto,
   ): Promise<ArticleEntity> {
-    const tags = await this.createTags(createArticleDto.tags);
-    return await this.articleRepository.save(
-      this.articleRepository.create({
-        ...createArticleDto,
-        user_id: userData.userId,
-        tags,
-      }),
-    );
+    return this.entityManager.transaction(async (em) => {
+      const articleRepository = em.getRepository(ArticleEntity);
+
+      const tags = await this.createTags(createArticleDto.tags, em);
+
+      return await articleRepository.save(
+        articleRepository.create({
+          ...createArticleDto,
+          user_id: userData.userId,
+          tags,
+        }),
+      );
+    });
   }
 
   public async getById(
@@ -110,14 +116,18 @@ export class ArticleService {
     }
   }
 
-  private async createTags(tags: string[]): Promise<TagEntity[]> {
+  private async createTags(
+    tags: string[],
+    em: EntityManager,
+  ): Promise<TagEntity[]> {
+    const tagRepository = em.getRepository(TagEntity);
     if (!tags || tags.length === 0) return [];
 
-    const entities = await this.tagRepository.findBy({ name: In(tags) });
+    const entities = await tagRepository.findBy({ name: In(tags) });
     const existingTags = entities.map((entity) => entity.name);
     const newTags = tags.filter((tag) => !existingTags.includes(tag));
-    const newEntities = await this.tagRepository.save(
-      newTags.map((tag) => this.tagRepository.create({ name: tag })),
+    const newEntities = await tagRepository.save(
+      newTags.map((tag) => tagRepository.create({ name: tag })),
     );
     return [...entities, ...newEntities];
   }

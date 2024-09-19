@@ -51,6 +51,7 @@ export class ArticleController {
     @CurrentUser() userData: IUserData,
   ): Promise<ArticleResDto> {
     const result = await this.articleService.create(userData, createArticleDto);
+    console.log(result);
     return ArticleMapper.toResponseDTO(result);
   }
 
